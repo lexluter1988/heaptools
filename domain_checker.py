@@ -7,6 +7,45 @@ from collections import OrderedDict
 from pprint import pprint
 
 
+class Cert:
+    """
+    class to storing cert info
+    domain, certs_names, issued_to, issued_by, expired
+    """
+    version = '0.1'
+    
+    def __init__(self, domain):
+        self.domain = domain
+        self.certs_names = ""
+        self.issued_to = ""
+        self.issued_by = ""
+        self.expired = ""
+
+
+class Site:
+    """
+    class to storing the checking site info
+    contain domain name, http or https
+    cert info, and history of redirects
+    """
+    version = '0.1'
+
+    def __init__(self, domain):
+        self.domain = domain
+        self.ssl = True
+        self.cert = None
+        self.url_history = []
+
+    def walk_http(self):
+        pass
+
+    def walk_https(self):
+        pass
+
+    def walk_ssl(self):
+        pass
+
+
 def check_domain(domain):
     result = OrderedDict()
     ctx = ssl.create_default_context()
