@@ -1,10 +1,14 @@
 # -*- encoding: utf-8 -*-
 # !/usr/bin/env python
 import argparse
+import logging
 import socket
 import ssl
 from collections import OrderedDict
 from pprint import pprint
+
+
+logger = logging.getLogger()
 
 
 class Cert:
@@ -13,7 +17,7 @@ class Cert:
     domain, certs_names, issued_to, issued_by, expired
     """
     version = '0.1'
-    
+
     def __init__(self, domain):
         self.domain = domain
         self.certs_names = ""
@@ -44,6 +48,15 @@ class Site:
 
     def walk_ssl(self):
         pass
+
+
+def init():
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 
 def check_domain(domain):
@@ -82,8 +95,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--domain", type=str, help="Do SSL lockup for provided domain", required=True)
     args = parser.parse_args()
+
+    init()
+    logger.info(f'Checking the domain {args.domain}')
     result = check_domain(args.domain)
     pprint(result)
+    logger.info(f'Success')
 
 
 if __name__ == '__main__':
