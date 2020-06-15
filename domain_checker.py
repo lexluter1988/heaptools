@@ -7,6 +7,7 @@ import ssl
 from collections import OrderedDict
 from pprint import pprint
 
+import requests
 
 logger = logging.getLogger()
 
@@ -59,7 +60,7 @@ def init():
     logger.addHandler(ch)
 
 
-def check_domain(domain):
+def check_domain_cert(domain):
     result = OrderedDict()
     ctx = ssl.create_default_context()
     with ctx.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM), server_hostname=domain) as s:
@@ -91,6 +92,21 @@ def check_domain(domain):
     return result
 
 
+def check_domain_return(domain):
+    history = []
+    for protocol in ['http://', 'https://']:
+        url = protocol+domain
+        logger.info(f'Attempting to look for {url}')
+        r = requests.get('http://' + domain, allow_redirects=False)
+        if r.status_code == 301 or r.status_code == 302:
+            history.append((url, r.status_code))
+            logger.info('Redirect found')
+            r = requests.get('http://' + domain, allow_redirects=True)
+        history.append((r.url, r.status_code))
+
+    return history
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--domain", type=str, help="Do SSL lockup for provided domain", required=True)
@@ -98,8 +114,10 @@ def main():
 
     init()
     logger.info(f'Checking the domain {args.domain}')
-    result = check_domain(args.domain)
+    result = check_domain_cert(args.domain)
     pprint(result)
+    result = check_domain_return(args.domain)
+    print(result)
     logger.info(f'Success')
 
 
