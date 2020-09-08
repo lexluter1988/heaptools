@@ -1,6 +1,3 @@
-# just a blueprint for now
-#
-
 from socket import *
 from threading import Thread
 
@@ -20,7 +17,10 @@ def fib_handler(client):
         if not req:
             break
         n = int(req)
-        result = fib(n)
+        try:
+            result = fib(n)
+        except RecursionError:
+            result = 0
         resp = str(result).encode('ascii') + b'\n'
         client.send(resp)
         print("Closed")
@@ -36,7 +36,7 @@ def fib_server(address):
     while True:
         try:
             client, addr = sock.accept()
-            print("Connected {}".format(address))
+            print("Connected {}".format(addr))
             Thread(target=fib_handler, args=(client, ), daemon=True).start()
         except KeyboardInterrupt:
             print('Goodbye')
@@ -44,4 +44,3 @@ def fib_server(address):
 
 
 fib_server(('', SOCKET_SERVER_PORT))
-
