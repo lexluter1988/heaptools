@@ -9,14 +9,27 @@ entry_pattern = r"(\s)*(?P<date>(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov)(
 endpoint = "https://ipvigilante.com/"
 
 
-def parse(log_file):
+def log_reader(log_file):
+    """
+    Generator approach to read files
+    :param log_file: path to log file
+    :return: one line at the time
+    """
     with open(log_file) as f:
-        for line in f.readlines():
-            if 'Failed password for root from' in line:
-                check = re.match(entry_pattern, line)
-                response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
-                date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
-                print(date, ip, country)
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            yield line
+
+
+def parse(log_file):
+    for line in log_reader(log_file):
+        if 'Failed password for root from' in line:
+            check = re.match(entry_pattern, line)
+            response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
+            date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
+            print(date, ip, country)
 
 
 def main():
