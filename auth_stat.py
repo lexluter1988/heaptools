@@ -2,7 +2,6 @@ import argparse
 import re
 import requests
 
-
 entry_pattern = r"(\s)*(?P<date>(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov)( \d{2} \d{2}:\d{2}:\d{2}))" \
                 r"(.*)(\s)*(?P<ip>(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b))"
 
@@ -16,18 +15,31 @@ def log_reader(log_file):
     :return: one line at the time
     """
     with open(log_file) as f:
-        while True:
-            line = f.readline()
-            if not line:
-                break
-            yield line
+        # version with yield from
+        yield from f.readlines()
+        # version where we return one line at the time
+        #while True:
+        #    line = f.readline()
+        #    if not line:
+        #        break
+        #    yield line
 
 
 def parse(log_file):
     for line in log_reader(log_file):
         if 'Failed password for root from' in line:
             check = re.match(entry_pattern, line)
-            response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
+
+            response = {
+                'data':
+                    {
+                        'country_name': None
+                    }
+            }
+            try:
+                response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
+            except:
+                pass
             date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
             print(date, ip, country)
 
