@@ -38,10 +38,10 @@ def parse(log_file):
                         'country_name': None
                     }
             }
-            # try:
-            #     response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
-            # except:
-            #     pass
+            try:
+                response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
+            except:
+                pass
             date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
             print(date, ip, country)
 
