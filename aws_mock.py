@@ -29,15 +29,17 @@ def test_my_model_save():
     mock.stop()
 
 
-def test_my_model_get():
-    mock = mock_s3()
+def test_create_security_group():
+    mock = mock_ec2()
     mock.start()
 
-    conn = boto3.resource('s3', region_name='us-east-1')
-    buckets = conn.get_all_buckets()
-    print(buckets)
+    conn = boto3.resource('ec2', region_name='us-east-1')
+    conn.create_security_group(
+        GroupName="vps",
+        Description="Security group",
+        VpcId='11111')
     mock.stop()
 
 
-test_my_model_save()
-test_my_model_get()
+test_create_security_group()
+
