@@ -50,7 +50,7 @@ def run():
     while any([tasks, recv_wait, send_wait]):
         while not tasks:
             # awaiting for I/O
-            can_recv, can_send, [] = select(recv_wait, send_wait, []) # is actually awaiting here
+            can_recv, can_send, _ = select(recv_wait, send_wait, []) # is actually awaiting here
             for s in can_recv:
                 tasks.append(recv_wait.pop(s))
             for s in can_send:
