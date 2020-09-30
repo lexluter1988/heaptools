@@ -1,17 +1,33 @@
 from socket import *
 from collections import deque
 from select import select
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor as Pool
+
 
 SOCKET_SERVER_PORT = 25000
 
+pool = Pool(10)
 tasks = deque()
 recv_wait = {}
 send_wait = {}
-executor = ThreadPoolExecutor(max_workers=10)
+future_wait = {}
 
-HOST = '127.0.0.1'
-PORT = '30000'
+
+future_notify, future_event = socketpair()
+
+
+def future_done(future):
+    tasks.append(future_wait.pop(future))
+    future_notify.send(b'x')
+
+
+def future_monitor():
+    while True:
+        yield 'recv', future_event
+        future_event.recv(100)
+
+
+tasks.append(future_monitor())
 
 
 def fib(n):
@@ -47,6 +63,9 @@ def run():
                 recv_wait[what] = task
             elif why == 'send':
                 send_wait[what] = task
+            elif why == 'future':
+                future_wait[what] = task
+                what.add_done_callback(future_done)
             else:
                 raise RuntimeError('Brraaah!')
         except StopIteration:
@@ -83,22 +102,14 @@ def fib_handler(client):
         if not req:
             break
         n = int(req)
-        result = executor.submit(fib, n).result()
+        future = pool.submit(fib, n)
+        yield 'future', future
+        result = future.result()  # Blocks
         resp = str(result).encode('ascii') + b'\n'
         yield 'send', client
         client.send(resp)
     print("Closed")
-# ^ yet working
+
 
 tasks.append(fib_server(('', SOCKET_SERVER_PORT)))
 run()
-
-
-def threadpoolex():
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        print('going to submit val to function')
-        future = executor.submit(fib, 40)
-        future2 = executor.submit(fib, 40)
-        print('submitted')
-        # print(future.result(), datetime.datetime.now())
-        # print(future2.result(), datetime.datetime.now())
