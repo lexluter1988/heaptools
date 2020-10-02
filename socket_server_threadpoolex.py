@@ -1,12 +1,13 @@
 from socket import *
 from collections import deque
 from select import select
-from concurrent.futures import ThreadPoolExecutor as Pool
+#from concurrent.futures import ThreadPoolExecutor as Pool
+from concurrent.futures import ProcessPoolExecutor as Pool
 
 
 SOCKET_SERVER_PORT = 25000
 
-pool = Pool(10)
+pool = Pool(4)
 tasks = deque()
 recv_wait = {}
 send_wait = {}
@@ -72,20 +73,40 @@ def run():
             print('task done')
 
 
+class AsyncSocket:
+    def __init__(self, sock):
+        self.sock = sock
+
+    def recv(self, maxsite):
+        yield 'recv', self.sock
+        return self.sock.recv(maxsite)
+
+    def send(self, data):
+        yield 'send', self.sock
+        return self.sock.send(data)
+
+    def accept(self):
+        yield 'recv', self.sock
+        client, addr = self.sock.accept()
+        return AsyncSocket(client), addr
+
+    def __getattr__(self, name):
+        return getattr(self.sock, name)
+
+
 def fib_server(address):
     """
     Simple socket server
     :param address: listening address
     :return: None
     """
-    sock = socket(AF_INET, SOCK_STREAM)
+    sock = AsyncSocket(socket(AF_INET, SOCK_STREAM))
     sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     sock.bind(address)
     sock.listen(5)
     print(f"Socket server started at {SOCKET_SERVER_PORT}")
     while True:
-        yield 'recv', sock
-        client, addr = sock.accept()
+        client, addr = yield from sock.accept()
         print("Connected {}".format(addr))
         tasks.append(fib_handler(client))
 
@@ -97,8 +118,7 @@ def fib_handler(client):
     :return: None
     """
     while True:
-        yield 'recv', client
-        req = client.recv(100)
+        req = yield from client.recv(100)
         if not req:
             break
         n = int(req)
@@ -106,8 +126,7 @@ def fib_handler(client):
         yield 'future', future
         result = future.result()  # Blocks
         resp = str(result).encode('ascii') + b'\n'
-        yield 'send', client
-        client.send(resp)
+        yield from client.send(resp)
     print("Closed")
 
 
