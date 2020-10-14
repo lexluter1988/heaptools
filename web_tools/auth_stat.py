@@ -1,7 +1,9 @@
+# -*- encoding: utf-8 -*-
+# !/usr/bin/env python
 import argparse
 import re
 import requests
-from memory_profiler import profile
+#from memory_profiler import profile
 
 entry_pattern = r"(\s)*(?P<date>(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov)( \d{2} \d{2}:\d{2}:\d{2}))" \
                 r"(.*)(\s)*(?P<ip>(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b))"
@@ -9,7 +11,7 @@ entry_pattern = r"(\s)*(?P<date>(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov)(
 endpoint = "https://ipvigilante.com/"
 
 
-@profile
+#@profile
 def log_reader(log_file):
     """
     Generator approach to read files
@@ -26,7 +28,7 @@ def log_reader(log_file):
                break
            yield line
 
-@profile
+#@profile
 def parse(log_file):
     for line in log_reader(log_file):
         if 'Failed password for root from' in line:
@@ -46,7 +48,7 @@ def parse(log_file):
             print(date, ip, country)
 
 
-@profile
+#@profile
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--log-file", type=str, help="Path to auth log file", required=True)

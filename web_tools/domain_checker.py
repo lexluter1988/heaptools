@@ -5,7 +5,6 @@ import logging
 import socket
 import ssl
 from collections import OrderedDict
-from pprint import pprint
 
 import requests
 
@@ -115,7 +114,6 @@ def main():
     init()
     logger.info(f'Checking the domain {args.domain}')
     result = check_domain_cert(args.domain)
-    pprint(result)
     result = check_domain_return(args.domain)
     print(result)
     logger.info(f'Success')
