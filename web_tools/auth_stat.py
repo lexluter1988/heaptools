@@ -3,7 +3,38 @@
 import argparse
 import re
 import requests
-#from memory_profiler import profile
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, DateTime, Boolean
+import os
+from datetime import datetime
+
+
+DB_PATH = 'sqlite:///auth.db'
+
+
+meta = MetaData()
+
+visitors = Table(
+    'visitors', meta,
+    Column('id', Integer, primary_key=True),
+    Column('country', String),
+    Column('ip', String),
+    Column('visit_at', DateTime, default=datetime.now()),
+)
+
+
+def _init_db(reinit=False):
+    engine = create_engine(DB_PATH, echo=True)
+    if not os.path.exists(DB_PATH) or reinit:
+        if os.path.exists('./auth.db'):
+            os.remove('./auth.db')
+        meta.create_all(engine)
+    print('db, already created!')
+    return engine
+
+
+engine = _init_db()
+conn = engine.connect()
+
 
 entry_pattern = r"(\s)*(?P<date>(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov)( \d{2} \d{2}:\d{2}:\d{2}))" \
                 r"(.*)(\s)*(?P<ip>(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b))"
@@ -45,6 +76,8 @@ def parse(log_file):
             except:
                 pass
             date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
+            ins = visitors.insert().values(ip=ip, country=country, visit_at=date)
+            conn.execute(ins)
             print(date, ip, country)
 
 
@@ -57,4 +90,5 @@ def main():
 
 
 if __name__ == '__main__':
+    _init_db()
     main()
