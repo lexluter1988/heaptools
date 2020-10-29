@@ -21,6 +21,13 @@ visitors = Table(
     Column('visit_at', DateTime, default=datetime.now()),
 )
 
+ip_location = Table(
+    'ip_location', meta,
+    Column('id', Integer, primary_key=True),
+    Column('ip', String, unique=True),
+    Column('country', String)
+)
+
 
 def _init_db(reinit=False):
     engine = create_engine(DB_PATH, echo=True)
