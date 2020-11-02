@@ -82,6 +82,8 @@ def parse(log_file):
                 response = requests.get(("{}{}".format(endpoint, check.group('ip')))).json()
             except:
                 pass
+            # this is spagetty code, we get results of parser and also here
+            # we insert in DB, while purpose of parser is to parse
             date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
             ins = visitors.insert().values(ip=ip, country=country, visit_at=date)
             conn.execute(ins)
