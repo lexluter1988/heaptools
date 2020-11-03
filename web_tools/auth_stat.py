@@ -9,6 +9,7 @@ from datetime import datetime
 
 
 DB_PATH = 'sqlite:///auth.db'
+DATE_FORMAT = '%b %d %H:%M:%S'
 
 
 meta = MetaData()
@@ -46,6 +47,8 @@ conn = engine.connect()
 entry_pattern = r"(\s)*(?P<date>(\(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov)( \d{2} \d{2}:\d{2}:\d{2}))" \
                 r"(.*)(\s)*(?P<ip>(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b))"
 
+# this site already blocked
+# TODO: need other options and endpoints
 endpoint = "https://ipvigilante.com/"
 
 
@@ -69,6 +72,7 @@ def log_reader(log_file):
 #@profile
 def parse(log_file):
     for line in log_reader(log_file):
+        # TODO: support records like "Invalid user admin from"
         if 'Failed password for root from' in line:
             check = re.match(entry_pattern, line)
 
@@ -85,9 +89,8 @@ def parse(log_file):
             # this is spagetty code, we get results of parser and also here
             # we insert in DB, while purpose of parser is to parse
             date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
-            ins = visitors.insert().values(ip=ip, country=country, visit_at=date)
+            ins = visitors.insert().values(ip=ip, country=country, visit_at=datetime.strptime(date, DATE_FORMAT))
             conn.execute(ins)
-            print(date, ip, country)
 
 
 #@profile
@@ -99,5 +102,4 @@ def main():
 
 
 if __name__ == '__main__':
-    _init_db()
     main()
