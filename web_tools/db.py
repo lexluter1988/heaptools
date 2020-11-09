@@ -25,11 +25,12 @@ ip_location = Table(
 )
 
 
-def init_db(reinit=False):
-    engine = create_engine(DB_PATH, echo=False)
-    if not os.path.exists(DB_PATH) or reinit:
-        if os.path.exists('./auth.db'):
-            os.remove('./auth.db')
-        meta.create_all(engine)
-    print('db already created!')
-    return engine
+class DB:
+    def __init__(self, reinit=False):
+        self.engine = create_engine(DB_PATH, echo=False)
+
+        if not os.path.exists(DB_PATH) or reinit:
+            if os.path.exists('./auth.db'):
+                os.remove('./auth.db')
+            meta.create_all(self.engine)
+        print('db already created!')
