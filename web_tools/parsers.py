@@ -56,3 +56,21 @@ class AuthParser(AbstractLogsParser):
                 date, ip, country = check.group('date'), check.group('ip'), response.get('data').get('country_name')
                 result.append((date, ip, country))
         return result
+
+
+class NginxParser(AbstractLogsParser):
+    def log_reader(self, log_file):
+        with open(log_file) as f:
+            # version with yield from
+            # yield from f.readlines()
+            # version where we return one line at the time
+            while True:
+                line = f.readline()
+                if not line:
+                    break
+                yield line
+
+    def parse(self, log_file):
+        result = []
+        # TODO: code
+        return result
