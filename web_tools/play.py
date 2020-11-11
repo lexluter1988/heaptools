@@ -26,6 +26,30 @@ def parse_nginx(log_file):
     return df
 
 
+def pie_chart_of_codes(df):
+    # need to name and color error codes appropriately
+    plt.close('all')
+    df_s = df['status'].value_counts()
+    df_s.plot(kind='pie')
+    plt.savefig('ngx.png')
+
+
+def total_requests_by_time(df):
+    pass
+
+
+def error_requests_by_time(df):
+    pass
+
+
+def good_requests_by_time(df):
+    pass
+
+
+def total_requests_by_ip(df):
+    pass
+
+
 def print_df(df):
     # examples
     #print(df['status'].value_counts())
@@ -38,20 +62,11 @@ def print_df(df):
     #print(df.describe())
     #print(df.groupby('status'))
     plt.close('all')
-    #df_s = df['status'].value_counts()
-
-
-    # working stuff
-    #df_s.plot(kind='pie')
-
+    #df.index = df.pop('time')
     #path = df['ip']
     #path.value_counts()[:5].plot(kind='bar')
-    nums = df['time']
-
-
-
     plt.savefig('ngx.png')
 
 
 df = parse_nginx('nginx.log')
-print_df(df)
+pie_chart_of_codes(df)
