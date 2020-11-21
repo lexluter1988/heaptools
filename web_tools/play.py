@@ -69,4 +69,10 @@ def print_df(df):
 
 
 df = parse_nginx('nginx.log')
-pie_chart_of_codes(df)
+#pie_chart_of_codes(df)
+
+
+# good parts
+
+#df = df.set_index('time').sort_index()
+#df.groupby('time').size()
