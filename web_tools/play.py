@@ -6,6 +6,11 @@ import numpy as np
 import pytz
 
 
+# TODO: always write timeframe, from to, period
+# TODO: plt close decorator
+# TODO: basic nginx doesn't have execution time logged
+# TODO: savefig as decorator with file name as parameter of decorator
+# TODO: html hable as decorator, maybe, with file name as parameter of decorator
 def parse_datetime(date):
     dt = datetime.strptime(date[1:-7], '%d/%b/%Y:%H:%M:%S')
     dt_tz = int(date[-6:-3]) * 60 + int(date[-3:-1])
@@ -27,15 +32,27 @@ def parse_nginx(log_file):
 
 
 def pie_chart_of_codes(df):
-    # need to name and color error codes appropriately
     plt.close('all')
-    df_s = df['status'].value_counts()
-    df_s.plot(kind='pie')
-    plt.savefig('ngx.png')
+    df['status'].value_counts().plot(kind='pie')
+    plt.savefig('codes.png')
 
 
 def total_requests_by_time(df):
-    pass
+    plt.close('all')
+    df.groupby('time').size().plot(kind='line', stacked=True, xlabel='time', ylabel='requests')
+    plt.savefig('requests_total.png')
+
+
+def total_requests_by_ip(df):
+    urls = df.ip.value_counts().to_frame().to_html()
+    with open('ips.html', 'w') as f:
+        f.write(urls)
+
+
+def urls_to_html_tables(df):
+    urls = df.request.value_counts().to_frame().to_html()
+    with open('urls.html', 'w') as f:
+        f.write(urls)
 
 
 def error_requests_by_time(df):
@@ -43,10 +60,6 @@ def error_requests_by_time(df):
 
 
 def good_requests_by_time(df):
-    pass
-
-
-def total_requests_by_ip(df):
     pass
 
 
