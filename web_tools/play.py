@@ -33,13 +33,13 @@ def parse_nginx(log_file):
 
 def pie_chart_of_codes(df):
     plt.close('all')
-    df['status'].value_counts().plot(kind='pie')
+    df['status'].value_counts().plot(kind='pie', figsize=(11, 6), autopct='%1.0f%%')
     plt.savefig('codes.png')
 
 
 def total_requests_by_time(df):
     plt.close('all')
-    df.groupby('time').size().plot(kind='line', stacked=True, xlabel='time', ylabel='requests')
+    df.groupby('time').size().plot(kind='line', stacked=True, xlabel='time', ylabel='requests', figsize=(11, 6))
     plt.savefig('requests_total.png')
 
 
