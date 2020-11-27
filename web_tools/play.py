@@ -63,22 +63,14 @@ def good_requests_by_time(df):
     pass
 
 
-def print_df(df):
-    # examples
-    #print(df['status'].value_counts())
-    # print(df['user_agent'].value_counts())
-    print(df['ip'].value_counts())
-    # print(df['size'].value_counts())
-    # print(df['time'].value_counts())
-    #df.index = pd.to_datetime(df.pop('time'))
-    print(df['time'].head())
-    #print(df.describe())
-    #print(df.groupby('status'))
-    plt.close('all')
-    #df.index = df.pop('time')
-    #path = df['ip']
-    #path.value_counts()[:5].plot(kind='bar')
-    plt.savefig('ngx.png')
+def build_report():
+    """
+    main funciton, creates html page sceleton, calls pandas to get stats
+    and build html page with images, tables and report by needed time
+    :return:
+    """
+    pass
+
 
 
 df = parse_nginx('nginx.log')
