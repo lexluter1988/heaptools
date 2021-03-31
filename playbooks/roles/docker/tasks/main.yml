@@ -1,0 +1,49 @@
+- name: docker | pre | Update apt cache
+  apt:
+    upgrade: no
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+
+- name: docker | pre | Uninstall existing 
+  apt: name={{ item }} state=absent
+  loop: ['docker', 'docker-engine', 'docker.io',  'containerd',  'runc']
+
+- name: docker | pre | Install needed 
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: ['apt-transport-https','ca-certificates', 'curl', 'gnupg', 'lsb-release']
+
+- name: docker | pre | Add docker key for repo
+  command:
+    cmd: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null    
+
+- name: docker | pre | Add docker repository
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: docker | main | Install docker
+  apt: name={{ item }} update_cache=yes state=latest
+  loop: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+
+- name: docker | post | Create docker group
+  group:
+    name: docker
+    state: present
+
+- name: docker | post | Add user to docker group
+  user:
+    name: alexey
+    groups: docker
+    append: yes
+
+- name: docker | post | Make sure service docker is enabled
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: docker | post | Make sure service containerd is enabled
+  service:
+    name: containerd
+    state: started
+    enabled: true

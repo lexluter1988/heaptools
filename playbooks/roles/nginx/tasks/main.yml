@@ -1,0 +1,29 @@
+- name: nginx | pre | Update apt cache
+  apt:
+    upgrade: no
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+
+- name: nginx | pre | Uninstall existing server
+  apt:
+    name: nginx
+    state: absent
+
+- name: nginx | main | Install web server
+  apt:
+    name: nginx
+    state: present
+
+- name: nginx | post | Make sure service is enabled
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: nginx | post | Initiate default site
+  copy:
+    src: ../files/index.html
+    dest: /var/www/html/index.html
+    owner: root
+    mode: 0644
+
