@@ -1,0 +1,23 @@
+- name: mysql | main | Install basic packages
+  apt: name={{ mysql_required_packages }} update_cache=yes state=latest
+
+- name: mysql | post| Set root password
+  mysql_user:
+    name: root
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: mysql | post | Remove all anonymous user accounts
+  mysql_user:
+    name: ''
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+
+- name: mysql | post | Remove the MySQL test database
+  mysql_db:
+    name: test
+    state: absent
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
