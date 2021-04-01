@@ -1,0 +1,8 @@
+- name: common | main | Update apt cache
+  apt:
+    upgrade: no
+    update_cache: yes
+    cache_valid_time: 86400 #One day
+
+- name: common | main | Install common packages
+  apt: name={{ common_packages }} update_cache=yes state=latest

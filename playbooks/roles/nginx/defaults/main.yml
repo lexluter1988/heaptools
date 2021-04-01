@@ -1,0 +1,3 @@
+# nginx default configuration
+create_default_site: true
+

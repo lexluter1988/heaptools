@@ -1,16 +1,8 @@
-- name: docker | pre | Update apt cache
-  apt:
-    upgrade: no
-    update_cache: yes
-    cache_valid_time: 86400 #One day
-
 - name: docker | pre | Uninstall existing 
-  apt: name={{ item }} state=absent
-  loop: ['docker', 'docker-engine', 'docker.io',  'containerd',  'runc']
+  apt: name={{ docker_uninstall_packages }} state=absent
 
 - name: docker | pre | Install needed 
-  apt: name={{ item }} update_cache=yes state=latest
-  loop: ['apt-transport-https','ca-certificates', 'curl', 'gnupg', 'lsb-release']
+  apt: name={{ docker_required_packages }} update_cache=yes state=latest
 
 - name: docker | pre | Add docker key for repo
   command:
@@ -22,17 +14,16 @@
     state: present
 
 - name: docker | main | Install docker
-  apt: name={{ item }} update_cache=yes state=latest
-  loop: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+  apt: name={{ docker_main_packages }} update_cache=yes state=latest
 
 - name: docker | post | Create docker group
   group:
     name: docker
     state: present
 
-- name: docker | post | Add user to docker group
+- name: docker | post | Add user {{ admin_user }} to docker group
   user:
-    name: alexey
+    name: "{{ admin_user }}"
     groups: docker
     append: yes
 

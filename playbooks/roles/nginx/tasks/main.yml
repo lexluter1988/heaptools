@@ -1,9 +1,3 @@
-- name: nginx | pre | Update apt cache
-  apt:
-    upgrade: no
-    update_cache: yes
-    cache_valid_time: 86400 #One day
-
 - name: nginx | pre | Uninstall existing server
   apt:
     name: nginx
@@ -26,4 +20,12 @@
     dest: /var/www/html/index.html
     owner: root
     mode: 0644
+  when: create_default_site
+  
+- name: nginx | post | Validate site is up
+  command: 
+    cmd: curl localhost
+  register: nginx_is_ip
 
+- debug: 
+    var: nginx_is_ip.stdout
