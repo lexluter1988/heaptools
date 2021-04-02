@@ -1,0 +1,21 @@
+- name: elastic | pre | Install jdk
+  apt:
+    name: openjdk-11-jdk
+    state: present
+
+- name: elastic | pre | Enable repo key
+  apt_key:
+    url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+- name: elastic | pre | Add sources
+  apt_repository:
+    repo: deb https://artifacts.elastic.co/packages/7.x/apt stable main
+    state: present
+    filename: 'elastic-7.x.list'
+
+- name: elastic | main | Install elasticsearch
+  apt:
+    name: elasticsearch
+    update_cache: yes
+    state: latest

@@ -1,4 +1,5 @@
 common_packages:
+  - vim
   - curl
   - wget
   - git
