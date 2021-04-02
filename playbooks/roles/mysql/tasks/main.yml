@@ -1,3 +1,6 @@
+- name: nginx | pre | Uninstall existing server
+  apt: name={{ mysql_required_packages }} update_cache=yes state=absent
+
 - name: mysql | main | Install basic packages
   apt: name={{ mysql_required_packages }} update_cache=yes state=latest
 

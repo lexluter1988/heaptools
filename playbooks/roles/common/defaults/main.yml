@@ -2,3 +2,6 @@ common_packages:
   - curl
   - wget
   - git
+  - htop
+  - python3-pip
+  - python3-dev
