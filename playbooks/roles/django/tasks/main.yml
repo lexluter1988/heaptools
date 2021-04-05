@@ -1,0 +1,29 @@
+- name: django | pre | create database
+  postgresql_db:
+    name: "{{ django_database_name }}"
+
+- name: django | pre | create database user
+  postgresql_user:
+    name: "{{ django_database_user }}"
+    password: "{{ django_database_user_password }}"
+    role_attr_flags: CREATEDB,NOSUPERUSER
+
+- name: django | pre | adjust db setttings 1
+  postgresql_query:
+    db: "{{ django_database_name }}"
+    query: ALTER ROLE  "{{ django_database_user }}" SET client_encoding TO 'utf8';
+
+- name: django | pre | adjust db setttings 2
+  postgresql_query:
+    db: "{{ django_database_name }}"
+    query: ALTER ROLE "{{ django_database_user }}" SET default_transaction_isolation TO 'read committed';
+
+- name: django | pre | adjust db setttings 3
+  postgresql_query:
+    db: "{{ django_database_name }}"
+    query: ALTER ROLE "{{ django_database_user }}" SET timezone TO 'UTC';
+
+- name: django | pre | adjust db setttings 4
+  postgresql_query:
+    db: "{{ django_database_name }}"
+    query: GRANT ALL PRIVILEGES ON DATABASE  "{{ django_database_name }}" TO  "{{ django_database_user }}";
