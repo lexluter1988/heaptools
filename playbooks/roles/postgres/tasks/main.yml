@@ -1,0 +1,5 @@
+- name: postgres | pre | Install needed 
+  apt: name={{ postgres_required_packages }} update_cache=yes state=latest
+
+- name: postgres | main | Ensure the PostgreSQL service is running
+  service: name=postgresql state=started enabled=yes
