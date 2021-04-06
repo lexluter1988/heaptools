@@ -1,3 +1,9 @@
-django_database_name: django_db
-django_database_user: django_admin
-django_database_user_password: 1q2w3e
+postgres_settings:
+  django_database_name: django_db
+  django_database_user: django_admin
+  django_database_user_password: 1q2w3e
+
+project_settings:
+  venv_path: /tmp/test/venv
+
+
