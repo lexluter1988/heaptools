@@ -5,5 +5,5 @@ postgres_settings:
 
 project_settings:
   venv_path: /tmp/test/venv
-
-
+  project_dir: /tmp/test
+  project_name: myproject
