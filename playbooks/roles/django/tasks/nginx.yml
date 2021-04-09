@@ -1,0 +1,12 @@
+- template:
+    src: ./templates/nginx.conf.j2
+    dest: /etc/nginx/sites-available/{{ project_settings.project_name }}
+    owner: root
+    mode: 0644
+
+- file:
+    src: /etc/nginx/sites-available/{{ project_settings.project_name }}
+    dest: /etc/nginx/sites-enabled/{{ project_settings.project_name }}
+    owner: root
+    group: www-data
+    state: link

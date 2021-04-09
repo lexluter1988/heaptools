@@ -7,3 +7,4 @@ project_settings:
   venv_path: /tmp/test/venv
   project_dir: /tmp/test
   project_name: myproject
+  project_domain: myproject.local

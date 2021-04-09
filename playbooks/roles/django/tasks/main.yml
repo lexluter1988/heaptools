@@ -34,27 +34,11 @@
       - psycopg2-binary
     virtualenv: "{{ project_settings.venv_path }}"
 
-- name: django | main | create project
-  command:
-    cmd: "{{ project_settings.venv_path }}/bin/django-admin.py startproject {{ project_settings.project_name }} {{ project_settings.project_dir }}"
+- name: django | post | project init
+  include_tasks: project.yml
 
-- template:
-    src: ./templates/settings.j2
-    dest: "{{ project_settings.project_dir}}/{{ project_settings.project_name }}/settings.py"
-    owner: root
-    mode: 0644
+- name: django | post | gunicorn configuration
+  include_tasks: gunicorn.yml
 
-- name: django | main | make migrations
-  command:
-    cmd: "{{ project_settings.venv_path }}/bin/python {{ project_settings.project_dir }}/manage.py makemigrations"
-
-- name: django | main | make migrate
-  command:
-    cmd: "{{ project_settings.venv_path }}/bin/python {{ project_settings.project_dir }}/manage.py migrate"
-
-- name: django | main | collect statics
-  command:
-    cmd: "{{ project_settings.venv_path }}/bin/python {{ project_settings.project_dir }}/manage.py collectstatic"
-
-# gunicorn part
-# nginx part
+- name: django | post | nginx configuration
+  include_tasks: nginx.yml
