@@ -1,6 +1,7 @@
 - name: django | main | create project
   command:
     cmd: "{{ project_settings.venv_path }}/bin/django-admin.py startproject {{ project_settings.project_name }} {{ project_settings.project_dir }}"
+  when: clean_install
 
 - template:
     src: ./templates/settings.j2

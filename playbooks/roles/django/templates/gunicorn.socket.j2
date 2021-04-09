@@ -1,8 +1,8 @@
 [Unit]
-Description=gunicorn socket
+Description={{ project_settings.project_name }}-gunicorn socket
 
 [Socket]
-ListenStream=/run/gunicorn.sock
+ListenStream=/run/{{ project_settings.project_name }}-gunicorn.sock
 
 [Install]
 WantedBy=sockets.target

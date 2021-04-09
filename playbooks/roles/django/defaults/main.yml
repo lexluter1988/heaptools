@@ -1,10 +1,15 @@
+customer: second
+
 postgres_settings:
-  django_database_name: django_db
-  django_database_user: django_admin
+  django_database_name: '{{ customer }}_django_db'
+  django_database_user: '{{ customer }}_django_admin'
   django_database_user_password: 1q2w3e
 
 project_settings:
-  venv_path: /tmp/test/venv
-  project_dir: /tmp/test
-  project_name: myproject
-  project_domain: myproject.local
+  venv_path: '/tmp/{{ customer }}/venv'
+  project_dir: '/tmp/{{ customer }}'
+  project_name: '{{ customer }}'
+  project_domain: '{{ customer }}.local'
+
+
+clean_install: yes

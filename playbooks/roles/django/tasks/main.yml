@@ -1,3 +1,9 @@
+- name: django | pre | clean if needed
+  file:
+    state: absent
+    path: "{{ project_settings.project_dir }}"
+  when: clean_install
+
 - name: django | pre | create database
   become_user: postgres
   postgresql_db:
@@ -25,6 +31,7 @@
 - name: django | pre | create virtualenv
   command:
     cmd: python3 -m venv "{{ project_settings.venv_path }}"
+  when: clean_install
 
 - name: django | main | virtualenv with deps
   pip:
