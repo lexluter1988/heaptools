@@ -10,3 +10,21 @@
     owner: root
     group: www-data
     state: link
+
+- name: django | post | reload gunicorn socket
+  service:
+    name: '{{ project_settings.project_name }}-gunicorn.socket'
+    state: restarted
+    daemon_reload: yes
+
+- name: django | post | reload gunicorn service
+  service:
+    name: '{{ project_settings.project_name }}-gunicorn.service'
+    state: restarted
+    daemon_reload: yes
+
+- name: django | post | reload nginx at the end
+  service:
+    name: nginx
+    state: restarted
+    daemon_reload: yes

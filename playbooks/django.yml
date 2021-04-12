@@ -2,7 +2,7 @@
 - hosts: all
   become: yes
   roles:
-    # - role: common
-    # - role: nginx
-    # - role: postgres
+    - role: common
+    - role: nginx
+    - role: postgres
     - role: django
