@@ -1,0 +1,4 @@
+- hosts: localhost
+
+- name: Some shit
+  ansible.builtin.ping:

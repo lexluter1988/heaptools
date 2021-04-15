@@ -1,0 +1,20 @@
+- name: lxd | pre | make tmp configuration file
+  copy:
+    src: ../files/lxd.tmp
+    dest: /tmp/lxd.yaml
+    owner: root
+    mode: 0644
+
+- name: lxd | main | install lxd package
+  command:
+    cmd: snap install lxd --channel=4.0/stable
+
+- name: lxd | post | Add user to lxd group
+  user:
+    name: alexey
+    groups: lxd
+    append: yes
+
+- name: lxd | post | init lxd software
+  shell: lxd init --preseed < /tmp/lxd.yaml
+   
