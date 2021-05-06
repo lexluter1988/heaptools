@@ -1,0 +1,10 @@
+- name: haproxy | main | Install haproxy
+  apt:
+    name: haproxy
+    state: present
+
+- name: haproxy | post | Make sure service is enabled
+  service:
+    name: haproxy
+    enabled: true
+
