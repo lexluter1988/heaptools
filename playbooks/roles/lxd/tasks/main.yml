@@ -17,4 +17,9 @@
 
 - name: lxd | post | init lxd software
   shell: lxd init --preseed < /tmp/lxd.yaml
-   
+  
+- name: lxd | post | set password  
+  shell: lxc config set core.trust_password={{ admin_user }}
+
+- name: lxd | post | configure to listen remote calls
+  shell: lxd init --network-address {{ admin_network }} --network-port 8443 --auto
